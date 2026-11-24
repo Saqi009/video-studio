@@ -1,0 +1,62 @@
+<!doctype html>
+<!-- Intro title card. Variables are filled by `vs build` from studio.toml + project.toml. -->
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Title","default":"Your video title"},
+  {"id":"subtitle","type":"string","label":"Subtitle","default":""},
+  {"id":"brand","type":"string","label":"Brand name","default":""},
+  {"id":"bg","type":"color","label":"Background","default":"#0b0d12"},
+  {"id":"ink","type":"color","label":"Text","default":"#ffffff"},
+  {"id":"accent","type":"color","label":"Accent","default":"#5b8cff"},
+  {"id":"font","type":"string","label":"Font family","default":"Inter, Helvetica, Arial, sans-serif"}
+]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg, #0b0d12); }
+      #root { position: relative; width: 100%; height: 100%; font-family: var(--font); color: var(--ink); }
+      .stack { position: absolute; left: 160px; right: 160px; top: 50%; transform: translateY(-50%); }
+      #bar { width: 120px; height: 10px; background: var(--accent); border-radius: 5px; margin-bottom: 48px; transform-origin: left center; }
+      #title { font-size: 112px; font-weight: 800; line-height: 1.02; letter-spacing: -0.035em; max-width: 1500px; }
+      #subtitle { margin-top: 36px; font-size: 44px; font-weight: 400; opacity: 0.72; max-width: 1400px; }
+      #brand { position: absolute; left: 160px; bottom: 96px; font-size: 30px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.6; }
+      #glow { position: absolute; width: 1400px; height: 1400px; right: -500px; top: -500px; border-radius: 50%;
+              background: radial-gradient(circle, var(--accent) 0%, transparent 62%); opacity: 0.22; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="intro" data-start="0" data-duration="4" data-width="1920" data-height="1080">
+      <div id="glow" class="clip" data-start="0" data-duration="4"></div>
+      <div class="stack clip" data-start="0" data-duration="4">
+        <div id="bar"></div>
+        <h1 id="title"></h1>
+        <p id="subtitle"></p>
+      </div>
+      <div id="brand" class="clip" data-start="0" data-duration="4"></div>
+    </div>
+    <script>
+      const v = window.__hyperframes.getVariables();
+      const root = document.documentElement;
+      root.style.setProperty("--bg", v.bg);
+      root.style.setProperty("--ink", v.ink);
+      root.style.setProperty("--accent", v.accent);
+      root.style.setProperty("--font", v.font);
+      document.getElementById("title").textContent = v.title;
+      document.getElementById("subtitle").textContent = v.subtitle || "";
+      document.getElementById("brand").textContent = v.brand || "";
+
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#glow", { scale: 0.85, opacity: 0 }, { scale: 1.05, opacity: 0.22, duration: 4, ease: "sine.out" }, 0)
+        .fromTo("#bar", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power3.out" }, 0.2)
+        .fromTo("#title", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, 0.35)
+        .fromTo("#subtitle", { y: 30, opacity: 0 }, { y: 0, opacity: 0.72, duration: 0.7, ease: "power3.out" }, 0.65)
+        .fromTo("#brand", { opacity: 0 }, { opacity: 0.6, duration: 0.6 }, 0.9)
+        .to(".stack, #brand", { opacity: 0, y: -20, duration: 0.45, ease: "power2.in" }, 3.5);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["intro"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

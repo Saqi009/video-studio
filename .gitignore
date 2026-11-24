@@ -1,0 +1,8 @@
+.env
+node_modules/
+__pycache__/
+projects/*/source/
+projects/*/music/
+projects/*/build/
+projects/*/output/
+.hyperframes/

@@ -1,0 +1,57 @@
+<!doctype html>
+<!-- Outro / call-to-action card. -->
+<html lang="en" data-composition-variables='[
+  {"id":"cta","type":"string","label":"Call to action","default":"Thanks for watching"},
+  {"id":"subtext","type":"string","label":"Sub text","default":""},
+  {"id":"brand","type":"string","label":"Brand name","default":""},
+  {"id":"bg","type":"color","label":"Background","default":"#0b0d12"},
+  {"id":"ink","type":"color","label":"Text","default":"#ffffff"},
+  {"id":"accent","type":"color","label":"Accent","default":"#5b8cff"},
+  {"id":"font","type":"string","label":"Font family","default":"Inter, Helvetica, Arial, sans-serif"}
+]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg, #0b0d12); }
+      #root { position: relative; width: 100%; height: 100%; font-family: var(--font); color: var(--ink);
+              display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+      #cta { font-size: 104px; font-weight: 800; letter-spacing: -0.035em; max-width: 1600px; line-height: 1.05; }
+      #subtext { margin-top: 32px; font-size: 42px; opacity: 0.72; max-width: 1400px; }
+      #pill { margin-top: 64px; padding: 22px 48px; border-radius: 999px; background: var(--accent); color: var(--bg);
+              font-size: 34px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="outro" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+      <div class="clip" data-start="0" data-duration="5" style="display:flex;flex-direction:column;align-items:center">
+        <h1 id="cta"></h1>
+        <p id="subtext"></p>
+        <div id="pill"></div>
+      </div>
+    </div>
+    <script>
+      const v = window.__hyperframes.getVariables();
+      const root = document.documentElement;
+      root.style.setProperty("--bg", v.bg);
+      root.style.setProperty("--ink", v.ink);
+      root.style.setProperty("--accent", v.accent);
+      root.style.setProperty("--font", v.font);
+      document.getElementById("cta").textContent = v.cta;
+      document.getElementById("subtext").textContent = v.subtext || "";
+      const pill = document.getElementById("pill");
+      if (v.brand) pill.textContent = v.brand; else pill.style.display = "none";
+
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#cta", { scale: 0.92, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.6)" }, 0.2)
+        .fromTo("#subtext", { y: 24, opacity: 0 }, { y: 0, opacity: 0.72, duration: 0.6, ease: "power3.out" }, 0.6)
+        .fromTo("#pill", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 0.9)
+        .to("#root", { opacity: 0, duration: 0.6, ease: "power1.in" }, 4.4);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["outro"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

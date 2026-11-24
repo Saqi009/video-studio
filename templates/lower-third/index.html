@@ -1,0 +1,60 @@
+<!doctype html>
+<!-- Lower third on a transparent background. Rendered as MOV (ProRes 4444 + alpha) and overlaid by FFmpeg. -->
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"Name","default":"Jane Doe"},
+  {"id":"role","type":"string","label":"Role / caption","default":""},
+  {"id":"duration","type":"number","label":"Seconds on screen","default":5},
+  {"id":"ink","type":"color","label":"Text","default":"#ffffff"},
+  {"id":"panel","type":"color","label":"Panel","default":"#0b0d12"},
+  {"id":"accent","type":"color","label":"Accent","default":"#5b8cff"},
+  {"id":"font","type":"string","label":"Font family","default":"Inter, Helvetica, Arial, sans-serif"}
+]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent; }
+      #root { position: relative; width: 100%; height: 100%; font-family: var(--font); }
+      #card { position: absolute; left: 96px; bottom: 230px; /* sits above burned-in captions */ display: flex; align-items: stretch; }
+      #accent { width: 10px; background: var(--accent); border-radius: 5px; margin-right: 0; transform-origin: center bottom; }
+      #panel { background: color-mix(in srgb, var(--panel) 82%, transparent); padding: 22px 40px 24px 32px; border-radius: 0 14px 14px 0; overflow: hidden; }
+      #name { color: var(--ink); font-size: 52px; font-weight: 750; letter-spacing: -0.02em; white-space: nowrap; }
+      #role { color: var(--ink); opacity: 0.75; font-size: 32px; margin-top: 6px; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="lower-third" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+      <div id="card" class="clip" data-start="0" data-duration="5">
+        <div id="accent"></div>
+        <div id="panel"><div id="name"></div><div id="role"></div></div>
+      </div>
+    </div>
+    <script>
+      const v = window.__hyperframes.getVariables();
+      const root = document.documentElement;
+      root.style.setProperty("--ink", v.ink);
+      root.style.setProperty("--panel", v.panel);
+      root.style.setProperty("--accent", v.accent);
+      root.style.setProperty("--font", v.font);
+      document.getElementById("name").textContent = v.name;
+      const role = document.getElementById("role");
+      if (v.role) role.textContent = v.role; else role.style.display = "none";
+
+      // `vs build` renders a copy of this template with every data-duration="5" rewritten to the
+      // requested hold time, and passes the same number here so the exit animation lines up.
+      const d = Math.max(2, Number(v.duration) || 5);
+
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#accent", { scaleY: 0 }, { scaleY: 1, duration: 0.35, ease: "power3.out" }, 0.05)
+        .fromTo("#panel", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power3.out" }, 0.2)
+        .fromTo("#name", { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0.35)
+        .fromTo("#role", { x: -30, opacity: 0 }, { x: 0, opacity: 0.75, duration: 0.5, ease: "power3.out" }, 0.48)
+        .to("#card", { x: -40, opacity: 0, duration: 0.45, ease: "power2.in" }, d - 0.5);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["lower-third"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

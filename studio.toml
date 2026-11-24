@@ -1,0 +1,25 @@
+# House style, shared by every project. Any section can be overridden in a project's project.toml.
+
+[brand]
+name = ""                                   # shown on the intro and outro; leave empty to hide
+font = "Inter, Helvetica, Arial, sans-serif"
+background = "#0b0d12"
+text = "#ffffff"
+accent = "#5b8cff"
+
+[output]
+width = 1920
+height = 1080          # 1080x1920 for vertical shorts
+fps = 30
+crf = 18               # lower = higher quality, bigger file
+preset = "medium"
+audio_bitrate = "192k"
+
+[audio]
+target_lufs = -14.0    # YouTube/Spotify loudness
+true_peak = -1.5
+voice_cleanup = true   # rumble filter + light denoise + gentle compression
+music_lufs = -28.0     # music bed level before ducking (voice sits at -18); raise for louder music
+duck = true            # dip the music while someone is talking
+music_fade_in = 1.5
+music_fade_out = 3.0
