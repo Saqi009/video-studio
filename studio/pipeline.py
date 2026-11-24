@@ -56,8 +56,16 @@ def transcribe(video: Path, out_srt: Path, cfg: dict) -> Path | None:
     return out_srt
 
 
-def build(project: Path, draft: bool = False) -> Path:
+def build(project: Path, draft: bool = False, style: str | None = None) -> Path:
     cfg = load_settings(project)
+    style = style or cfg["edit"]["style"]
+    if style == "beat":
+        from .beat import build_beat
+        (project / "build").mkdir(exist_ok=True)
+        (project / "output").mkdir(exist_ok=True)
+        return build_beat(project, cfg, source_files(project, cfg), music_file(project, cfg), draft)
+    if style != "talk":
+        raise StudioError(f"edit.style must be talk or beat (got {style!r})")
     out_cfg, audio, edit, gfx, brand = cfg["output"], cfg["audio"], cfg["edit"], cfg["graphics"], cfg["brand"]
     W, H, FPS = int(out_cfg["width"]), int(out_cfg["height"]), int(out_cfg["fps"])
     build_dir, out_dir = project / "build", project / "output"

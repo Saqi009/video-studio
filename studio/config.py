@@ -61,13 +61,23 @@ DEFAULTS: dict = {
         "music_fade_in": 1.5,
         "music_fade_out": 3.0,
     },
-    "edit": {"trim_silence": True, "silence_threshold_db": -35.0, "min_silence": 0.7, "keep_pad": 0.18},
+    "edit": {"style": "talk", "trim_silence": True, "silence_threshold_db": -35.0, "min_silence": 0.7, "keep_pad": 0.18},
     "graphics": {
         "intro": True, "outro": True,
         "outro_cta": "Thanks for watching", "outro_subtext": "",
         "lower_thirds": [],
     },
     "captions": {"mode": "none", "file": "", "burn": False, "language": "en", "model": "small.en", "font_size": 22},
+    "beat": {
+        "pattern": [4, 4, 2, 2, 4, 4, 8],   # beats per cut, cycled
+        "transitions": [],                 # xfade names or "cut"; empty = built-in mix
+        "transition_beats": 0.5,           # length of a non-cut transition, in beats
+        "zoom": 0.06,                      # slow push in / pull out per clip (0 = off)
+        "fit": "auto",                     # auto = cover, or blur backdrop for vertical clips | cover | contain | blur
+        "order": "sequence",               # sequence = clips in filename order, mix = interleave
+        "clip_audio": 0.0,                 # 0 = music only, 0.3 = clips' own sound quietly underneath
+        "max_seconds": 0,                  # 0 = as long as the music allows
+    },
     "source": {"files": []},
     "music": {"file": ""},
 }

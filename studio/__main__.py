@@ -20,6 +20,7 @@ subtitle = ""
 files = []
 
 [edit]
+style = "talk"               # talk = talking-head edit | beat = cut to the music's beat (or use: build --beat)
 trim_silence = true          # cut dead air
 silence_threshold_db = -35   # quieter than this counts as silence; raise towards -30 for noisy rooms
 min_silence = 0.7            # only pauses longer than this (seconds) are cut
@@ -41,6 +42,14 @@ outro_subtext = ""
 [music]
 # Leave empty to use the first audio file in music/ (where `./vs music get` saves).
 file = ""
+
+[beat]
+# Only used when style = "beat" (or build --beat).
+pattern = [4, 4, 2, 2, 4, 4, 8]   # beats per cut, repeated. Smaller = faster, more energetic cuts
+zoom = 0.06                       # slow zoom on each clip (0 = off)
+clip_audio = 0.0                  # 0 = music only; 0.3 = keep the clips' own sound quietly
+order = "sequence"                # sequence = clips in filename order; mix = interleave clips
+max_seconds = 0                   # 0 = as long as the music allows, e.g. 60 for a one-minute reel
 
 [captions]
 mode = "none"     # none | transcribe (local Whisper) | file (an .srt timed to the original recording)
@@ -70,7 +79,7 @@ def cmd_list(a):
 
 
 def cmd_build(a):
-    pipeline.build(project_dir(a.slug), draft=a.draft)
+    pipeline.build(project_dir(a.slug), draft=a.draft, style="beat" if a.beat else None)
 
 
 def cmd_graphics(a):
@@ -141,7 +150,9 @@ def main(argv=None):
     s = sub.add_parser("list", help="list projects"); s.set_defaults(fn=cmd_list)
     s = sub.add_parser("doctor", help="check tools and keys"); s.set_defaults(fn=cmd_doctor)
     s = sub.add_parser("build", help="edit + render the final video"); s.add_argument("slug")
-    s.add_argument("--draft", action="store_true", help="fast 720p preview"); s.set_defaults(fn=cmd_build)
+    s.add_argument("--draft", action="store_true", help="fast 720p preview")
+    s.add_argument("--beat", action="store_true", help="music-video style: cuts and transitions on the music's beat")
+    s.set_defaults(fn=cmd_build)
     s = sub.add_parser("graphics", help="render only the intro/outro to preview the look"); s.add_argument("slug"); s.set_defaults(fn=cmd_graphics)
 
     t = sub.add_parser("tella", help="Tella recordings").add_subparsers(dest="tcmd", required=True)

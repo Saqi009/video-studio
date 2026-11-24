@@ -113,6 +113,26 @@ Results go to `projects/my-video/output/`: `my-video.mp4`, `my-video.srt` (when 
 
 To check only the look of the intro and outro: `./vs graphics my-video`.
 
+## Beat mode: a music video cut to the beat
+
+For B-roll, travel clips, events or product shots, cut the clips to the music instead of trimming speech:
+
+```bash
+./vs build my-video --beat --draft
+```
+
+(or set `style = "beat"` under `[edit]` in `project.toml`).
+
+- HyperFrames' beat detector finds the beats in the track in `music/`.
+- Every cut lands exactly on a beat, every 4, 4, 2, 2, 4, 4, 8 beats (`[beat] pattern`). Use smaller numbers for faster, more energetic cuts.
+- Most cuts are hard cuts. Every third one is an effect (white flash, zoom, slide, circle, smooth slide, fade), centred on the beat.
+- The music is shifted so a beat lands exactly where the intro card ends.
+- Each clip gets a slow zoom in or out (`zoom`). Clips fill the frame, and vertical phone clips in a 16:9 video sit over a blurred copy of themselves (`fit = "auto"`).
+- Picks are spread from the start to the end of every clip, in filename order (`order = "mix"` interleaves the clips instead). Rename clips `01-...`, `02-...` to set the story order.
+- `clip_audio = 0.3` keeps the clips' own sound quietly under the music. `max_seconds = 60` makes a one-minute reel.
+
+`build/edit-report.json` lists every cut time, transition and which part of which clip was used.
+
 ## What the build does
 
 1. **Conform.** Every file in `source/` (in filename order) is scaled and padded to the output size and frame rate, with 48 kHz stereo audio, and joined. With `voice_cleanup` on, it also gets a rumble filter, light denoise and gentle compression.
